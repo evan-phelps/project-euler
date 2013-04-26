@@ -8,6 +8,7 @@ from itertools import repeat
 from itertools import tee
 import operator as op
 from functools import reduce
+from collections import Counter
 try: import numpypy # for pypy experimental support
 except ImportError: pass
 import numpy
@@ -46,7 +47,7 @@ def pfactorGen(N):
     # divide out the lowest numbers first so that as long as the
     # reduced n is composite, it must be greater than the square of the
     # next largest number (n>i^2).
-    while i*i < n:
+    while i*i <= n:
         while n%i == 0:
             yield i      # n is divisible by i
             n /= i
@@ -155,6 +156,23 @@ def p4numpy():
         if s == s[::-1]:
             print(s)
             break
+
+def p5(N=20):
+    """What is the smallest positive number that is evenly divisible
+    by all of the numbers from 1 to 20?
+    """
+    # Factors of smallest number evenly divisible by every number
+    # from 1 to N given as follows:  from all numbers between 2 and
+    # N, take the maximum multiplicity (n_i) of each factor (i).
+    fcounters = [Counter(pfactorGen(n)) for n in range(2,N+1)]
+    factors = Counter()
+    for fc in fcounters:
+        for k,v in fc.items():
+            if v>factors[k]: factors[k]=v
+    answer = 1
+    for k,v in factors.items(): answer *= k**v  #print(k,v)
+    return answer
+    
 
 # #####################################################################
 # ################# PRELIMINARY ANALYSIS FUNCTIONS ####################
