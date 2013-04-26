@@ -1,0 +1,16 @@
+build/
+bak/
+logs/
+tests/
+__pycache__/
+*.autosave
+*\~
+*.so
+*.bak
+fib*
+!fib.cpp
+mpz*
+*.pyc
+*.log
+*\#*
+pe.c
