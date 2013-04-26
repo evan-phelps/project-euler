@@ -3,6 +3,7 @@
 # quickly than python3!
 
 import datetime
+import math
 from itertools import takewhile
 from itertools import repeat
 from itertools import tee
@@ -55,6 +56,24 @@ def pfactorGen(N):
     # the final reduced n is the last and largest non-composite (prime)
     # factor of N.
     yield int(n)
+
+def sieveErat(N=10):
+    # should probably be implemented as map to allow for quick removal
+    # of eliminated numbers rather than redundantly setting the
+    # booleans to False
+    def getnext(i,nums):
+        mx = len(nums)
+        if i >= mx: return -1
+        while i < mx and not nums[i][1] or i == 0: i += 1
+        return i
+    nums = [list(t) for t in zip(range(2,N+1),(N-1)*[True])]
+    mx = len(nums)
+    i = 0
+    while i >= 0 and i < mx:
+        v = nums[i][0]
+        for j in range(i+v,N-1,v): nums[j][1] = False
+        i = getnext(i+1,nums)
+    return [n[0] for n in nums if n[1]]
 
 # #####################################################################
 # ######################## SOLUTION FUNCTIONS #########################
@@ -157,6 +176,7 @@ def p4numpy():
             print(s)
             break
 
+@timeit
 def p5(N=20):
     """What is the smallest positive number that is evenly divisible
     by all of the numbers from 1 to 20?
@@ -173,7 +193,54 @@ def p5(N=20):
     for k,v in factors.items(): answer *= k**v  #print(k,v)
     return answer
     
+@timeit
+def p6(N=100):
+    """Find the difference between the sum of the squares of the first
+    one hundred natural numbers and the square of the sum.
+    """
+    return sum(2*i*j for i,j in combinations(range(1,N+1),2))
 
+@timeit
+def p7(nth=10001):
+    """What is the 10001st prime number?"""
+    # currently, from command line, need to get 100001st element from
+    # returned list. need to implement generator for this instead!
+    # for now, I'll estimate how many to pull based on the prime
+    # number theorem.
+    N = nth
+    while nth > N/(math.log(N)-1): N *= 1.1
+    N = int(N)
+    print('estimated N = %d' % N)
+    return list(sieveErat(int(N)))[nth-1]
+
+@timeit
+def p8():
+    """Find the greatest product of five consecutive digits in the
+    1000-digit number.
+    """
+    nstr = '7316717653133062491922511967442657474235534919493496983520312774506326239578318016984801869478851843858615607891129494954595017379583319528532088055111254069874715852386305071569329096329522744304355766896648950445244523161731856403098711121722383113622298934233803081353362766142828064444866452387493035890729629049156044077239071381051585930796086670172427121883998797908792274921901699720888093776657273330010533678812202354218097512545405947522435258490771167055601360483958644670632441572215539753697817977846174064955149290862569321978468622482839722413756570560574902614079729686524145351004748216637048440319989000889524345065854122758866688116427171479924442928230863465674813919123162824586178664583591245665294765456828489128831426076900422421902267105562632111110937054421750694165896040807198403850962455444362981230987879927244284909188845801561660979191338754992005240636899125607176060588611646710940507754100225698315520005593572972571636269561882670428252483600823257530420752963450'
+    l = len(nstr)
+    mx = 0
+    for i in range(0,l-5):
+        prod = reduce(op.mul,[int(d) for d in nstr[i:i+5]])
+        if mx < prod: mx = prod
+    return mx
+
+@timeit
+def p9():
+    """There exists exactly one Pythagorean triplet for which
+    a + b + c = 1000.  Find the product abc.
+    """
+    for b in range(1,1000):
+        for a in range(1,b):
+            c = pow(a**2+b**2,0.5)
+            if a+b+c==1000:
+                return a*b*c
+@timeit
+def p10(N=10):
+    """Find the sum of all the primes below two million."""
+    return sum(sieveErat(N))
+    
 # #####################################################################
 # ################# PRELIMINARY ANALYSIS FUNCTIONS ####################
 # #####################################################################
