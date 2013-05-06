@@ -43,53 +43,6 @@ def part(l, N):
     """partition list 'l' into sublists of length 'N'"""
     return [l[n:n+N] for n in range(0,len(l),N)]
 
-def sieveErat(N=10):
-    # should probably be implemented as map to allow for quick removal
-    # of eliminated numbers rather than redundantly setting the
-    # booleans to False
-    def getnext(i,nums):
-        mx = len(nums)
-        if i >= mx: return -1
-        while i < mx and not nums[i][1] or i == 0: i += 1
-        return i
-    nums = [list(t) for t in zip(range(2,N+1),(N-1)*[True])]
-    mx = len(nums)
-    i = 0
-    while i >= 0 and i < mx:
-        v = nums[i][0]
-        for j in range(i+v,N-1,v): nums[j][1] = False
-        i = getnext(i+1,nums)
-    return [n[0] for n in nums if n[1]]
-
-def factorGen(N):
-    """generate all factors of the number N"""
-
-    factors = []
-    for x in range(2, int(math.sqrt(N))):
-        d,r = divmod(N,x)
-        if r == 0:
-            factors.append(x)
-            factors.append(d)
- 
-    return [1, N] + factors
-
-def pfactorGen(N):
-    """generate prime factors of the number N"""
-    n = N
-    p = list(takewhile(lambda x: x < N, nttools.gen_primes()))
-    i = 0
-    # divide out the lowest numbers first so that as long as the
-    # reduced n is composite, it must be greater than the square of the
-    # next largest number (n>i^2).
-    while p[i]*p[i] <= n:
-        while n%p[i] == 0:
-            yield p[i]      # n is divisible by i
-            n /= p[i]
-        i += 1
-    # the final reduced n is the last and largest non-composite (prime)
-    # factor of N.
-    if n > 1: yield int(n)
-
 # #####################################################################
 # ######################## SOLUTION FUNCTIONS #########################
 # #####################################################################
@@ -137,12 +90,11 @@ def p2(lt=4000000, fltr=lambda x:x%2==0):
 def p3(N=600851475143):
     """P3: What is the largest prime factor of the number 600851475143?
     """
-    # first attempt was to your a prime sieve first and then filter
+    # irst attempt was to your a prime sieve first and then filter
     # the factors, but my naive prime sieve (Eratosthenes)
-    # implementation ran into performance issues.  Maybe worth trying
-    # a more sophisticated sieve, or an implementation language that
-    # supports tail recursion (?).
-    return max(pfactorGen(N))
+    # implementation ran into performance issues. This version uses
+    # the Pollard-Rho-Brent algorithm -- very, very efficient.
+    return max(nttools.pfactor(N))
 
 @timeit
 def p4():
@@ -199,7 +151,7 @@ def p5(N=20):
     # Factors of smallest number evenly divisible by every number
     # from 1 to N given as follows:  from all numbers between 2 and
     # N, take the maximum multiplicity (n_i) of each factor (i).
-    fcounters = [Counter(pfactorGen(n)) for n in range(2,N+1)]
+    fcounters = [Counter(nttools.pfactorGen(n)) for n in range(2,N+1)]
     factors = Counter()
     for fc in fcounters:
         for k,v in fc.items():
@@ -241,7 +193,7 @@ def p7alt(nth=10001):
     while nth > N/(math.log(N)-1): N *= 1.1
     N = int(N)
     #print('estimated N = %d' % N)
-    return list(sieveErat(int(N)))[nth-1]
+    return list(nttools.sieveErat(int(N)))[nth-1]
 
 @timeit
 def p8():
@@ -270,7 +222,7 @@ def p9():
 @timeit
 def p10(N=10):
     """Find the sum of all the primes below two million."""
-    return sum(sieveErat(N))
+    return sum(nttools.sieveErat(N))
 
 @timeit
 def p11():
@@ -330,7 +282,7 @@ def p12(N=5,N0=1):
     n = N0
     nfs = 1
     for i,n in [(i,i*(i+1)/2) for i in range(N0,N+1)]:
-        nfs = len(factorGen(n))
+        nfs = len(nttools.factor(n))
         if nfs >= 500:
             print(i,nfs,int(n))
             break
