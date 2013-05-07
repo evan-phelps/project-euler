@@ -392,6 +392,25 @@ def p13():
             53503534226472524250874054075591789781264330331690]
     return str(reduce(op.add,[int(str(n)[0:12]) for n in nums]))[0:10]
 
+@timeit
+def p14(N0=2,N1=100):
+    cnt = Counter()
+    maxt = (1,0)
+    def collatz(N):
+        dm = divmod(N,2)
+        if dm[1] == 0: return dm[0]
+        else: return 3*N+1
+    def count(N):
+        if cnt[N] > 0 or N == 1:
+            return cnt[N]
+        else:
+            cnt[N] += 1+count(collatz(N))
+        return cnt[N]
+    for n in range(N0,N1+1):
+        c = count(n)
+        if c > maxt[1]: maxt = (n,c)
+    return maxt
+
 # #####################################################################
 # ################# PRELIMINARY ANALYSIS FUNCTIONS ####################
 # #####################################################################
