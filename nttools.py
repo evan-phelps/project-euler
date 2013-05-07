@@ -6,6 +6,7 @@ import fractions
 import math
 from itertools import takewhile
 
+
 def primes(pstart=1, N=None):
     prime = gmpy.mpz(pstart)
     breakcondition = lambda x: True
