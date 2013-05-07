@@ -14,7 +14,8 @@ from collections import Counter
 try: import numpypy # for pypy experimental support
 except ImportError: pass
 import numpy
-import nttools
+try: import nttools
+except ImportError: pass
 
 # in case of command-line timeit, set stdoutON = False, i.e., from bash
 # python -mtimeit -s "import solutions as pe"\
@@ -393,20 +394,24 @@ def p13():
     return str(reduce(op.add,[int(str(n)[0:12]) for n in nums]))[0:10]
 
 @timeit
-def p14(N0=2,N1=100):
+def p14(N1=1000000):
+    """Which starting number, under one million, produces the longest
+    chain in its Collatz sequence?
+    """
     cnt = Counter()
     maxt = (1,0)
+
     def collatz(N):
         dm = divmod(N,2)
         if dm[1] == 0: return dm[0]
         else: return 3*N+1
+
     def count(N):
-        if cnt[N] > 0 or N == 1:
-            return cnt[N]
-        else:
+        if N > 1 and N not in cnt:
             cnt[N] += 1+count(collatz(N))
         return cnt[N]
-    for n in range(N0,N1+1):
+
+    for n in range(2,N1+1):
         c = count(n)
         if c > maxt[1]: maxt = (n,c)
     return maxt
