@@ -3,6 +3,7 @@
 import gmpy
 import random
 import fractions
+import math
 from itertools import takewhile
 
 def primes(pstart=1, N=None):
@@ -97,24 +98,26 @@ def pfactorGen(N):
     """generate prime factors of the number N"""
 
     n = N
-    p = list(takewhile(lambda x: x < N, primes(N=N)))  # gen_primes()))
-    i = 0
+    if n == 2:
+        yield 2
+    else:
+        p = list(takewhile(lambda x: x < N, primes(N=N)))  # gen_primes()))
+        i = 0
+        # divide out the lowest numbers first so that as long as the
+        # reduced n is composite, it must be greater than the square of the
+        # next largest number (n>i^2).
 
-    # divide out the lowest numbers first so that as long as the
-    # reduced n is composite, it must be greater than the square of the
-    # next largest number (n>i^2).
+        while p[i] * p[i] <= n:
+            while n % p[i] == 0:
+                yield p[i]  # n is divisible by i
+                n /= p[i]
+            i += 1
 
-    while p[i] * p[i] <= n:
-        while n % p[i] == 0:
-            yield p[i]  # n is divisible by i
-            n /= p[i]
-        i += 1
+        # the final reduced n is the last and largest non-composite (prime)
+        # factor of N.
 
-    # the final reduced n is the last and largest non-composite (prime)
-    # factor of N.
-
-    if n > 1:
-        yield int(n)
+        if n > 1:
+            yield int(n)
 
 
 def prb(N):
@@ -151,7 +154,7 @@ def pfactor(N, myprimes=None):
     p = gmpy.mpz(N)
     if p.is_prime():
         myprimes.append(N)
-    else:
+    elif p > 1:
         f = prb(N)
         myprimes.append(f)
         p = pfactor(int(N / f), myprimes)

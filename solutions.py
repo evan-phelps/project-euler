@@ -152,7 +152,8 @@ def p5(N=20):
     # Factors of smallest number evenly divisible by every number
     # from 1 to N given as follows:  from all numbers between 2 and
     # N, take the maximum multiplicity (n_i) of each factor (i).
-    fcounters = [Counter(nttools.pfactorGen(n)) for n in range(2,N+1)]
+    fcounters = [Counter(nttools.pfactor(N=n)) for n in range(2,N+1)]
+    #could also have used pfactorGen(n)
     factors = Counter()
     for fc in fcounters:
         for k,v in fc.items():
