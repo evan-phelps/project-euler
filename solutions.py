@@ -436,6 +436,12 @@ def p14(N1=1000000):
         maxt = (n, c) if c > maxt[1] else maxt
     return maxt
 
+
+@timeit
+def p16(N=1000):
+    return reduce(lambda x, y: int(x)+int(y), list(str(2**N)))
+
+
 # #####################################################################
 # ################# PRELIMINARY ANALYSIS FUNCTIONS ####################
 # #####################################################################
