@@ -442,6 +442,45 @@ def p16(N=1000):
     return reduce(lambda x, y: int(x)+int(y), list(str(2**N)))
 
 
+@timeit
+def p17():
+    # manual counting of occurences
+    n = 891*3 + len('onethousand') + 900*len('hundred')
+    n = n + 10*len('teneleventwelvethirteenfourteenfifteensixteenseventeeneighteennineteen')
+    n = n + (90+100)*len('onetwothreefourfivesixseveneightnine')
+    n = n + 100*len('twentythirtyfortyfiftysixtyseventyeightyninety')
+    return n
+
+
+@timeit
+def p17alt(N=1000):
+    if N > 1000:
+        return 'N must be less than 1000!'
+    digits = {0: 0, 1: len('one'), 2: len('two'), 3: len('three'), 4: len('four'), 5: len('five'),
+              6: len('six'), 7: len('seven'), 8: len('eight'), 9: len('nine')}
+    lst2 = {0: 0, 10: len('ten'), 11: len('eleven'), 12: len('twelve'), 13: len('thirteen'),
+            14: len('fourteen'), 15: len('fifteen'), 16: len('sixteen'), 17: len('seventeen'),
+            18: len('eighteen'), 19: len('nineteen')}
+    tens = {0: 0, 1: 0, 2: len('twenty'), 3: len('thirty'), 4: len('forty'), 5: len('fifty'),
+            6: len('sixty'), 7: len('seventy'), 8: len('eighty'), 9: len('ninety')}
+
+    def countletters(n):
+        if n == 1000:
+            return len('onethousand')
+        nletters = 0 if n < 100 or n % 100 == 0 else len('and')
+        nletters = nletters + (digits[n/100] + len('hundred') if n >= 100 else 0)
+        n = n % 100
+        if n in lst2.keys():
+            nletters = nletters + lst2[n]
+        else:
+            nletters = nletters + tens[n/10]
+            n = n % 10
+            if n > 0:
+                nletters = nletters + digits[n]
+        return nletters
+
+    return sum([countletters(n) for n in range(1, N+1)])
+
 # #####################################################################
 # ################# PRELIMINARY ANALYSIS FUNCTIONS ####################
 # #####################################################################
