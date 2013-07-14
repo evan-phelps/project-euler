@@ -160,3 +160,12 @@ def pfactor(N, myprimes=None):
         myprimes.append(f)
         p = pfactor(int(N / f), myprimes)
     return myprimes
+
+
+def gen_fib():
+    # fibonacci generator; since we need to sum all elements, no
+    # need to use optimized expression to extract element N
+    a, b = 0, 1
+    while True:
+        yield a
+        a, b = b, a+b

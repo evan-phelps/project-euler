@@ -7,6 +7,7 @@ import math
 import operator as op
 from functools import reduce
 from collections import Counter
+import datetime as dt
 
 from itertools import takewhile, repeat, combinations
 import numpy
@@ -73,14 +74,7 @@ def p2(lt=4000000, fltr=lambda x: x % 2 == 0):
     values do not exceed four million, find the sum of the even-valued
     terms.
     """
-    def fibGen():
-        # fibonacci generator; since we need to sum all elements, no
-        # need to use optimized expression to extract element N
-        a, b = 0, 1
-        while True:
-            yield a
-            a, b = b, a+b
-    fg = fibGen()
+    fg = nttools.gen_fib()
     # filter and sum even elements of fibonacci series up to value 'lt'
     return reduce(op.add, filter(fltr, takewhile(lambda x: x < lt, fg)))
 
@@ -444,11 +438,11 @@ def p16(N=1000):
 
 @timeit
 def p17():
-    # manual counting of occurences
-    n = 891*3 + len('onethousand') + 900*len('hundred')
-    n = n + 10*len('teneleventwelvethirteenfourteenfifteensixteenseventeeneighteennineteen')
-    n = n + (90+100)*len('onetwothreefourfivesixseveneightnine')
-    n = n + 100*len('twentythirtyfortyfiftysixtyseventyeightyninety')
+    # head-count occurences of unique words grouped according to frequency
+    n = 891*len('and') + len('onethousand') + 900*len('hundred') \
+        + 10*len('teneleventwelvethirteenfourteenfifteensixteenseventeeneighteennineteen') \
+        + (90+100)*len('onetwothreefourfivesixseveneightnine') \
+        + 100*len('twentythirtyfortyfiftysixtyseventyeightyninety')
     return n
 
 
@@ -480,6 +474,46 @@ def p17alt(N=1000):
         return nletters
 
     return sum([countletters(n) for n in range(1, N+1)])
+
+
+@timeit
+def p18(ptri=[[75], [95, 64], [17, 47, 82], [18, 35, 87, 10], [20, 4, 82, 47, 65], [19, 1, 23, 75, 3, 34], [88, 2, 77, 73, 7, 63, 67], [99, 65, 4, 28, 6, 16, 70, 92], [41, 41, 26, 56, 83, 40, 80, 70, 33], [41, 48, 72, 33, 47, 32, 37, 16, 94, 29], [53, 71, 44, 65, 25, 43, 91, 52, 97, 51, 14], [70, 11, 33, 28, 77, 73, 17, 78, 39, 68, 17, 57], [91, 71, 52, 38, 17, 14, 91, 43, 58, 50, 27, 29, 48], [63, 66, 4, 68, 89, 53, 67, 30, 73, 16, 69, 87, 40, 31], [4, 62, 98, 27, 23, 9, 70, 98, 73, 93, 38, 53, 60, 4, 23]]):
+    nrows = len(ptri)
+    for irow in reversed(range(0, nrows-1)):
+        for icol, val in enumerate(ptri[irow]):
+            childvals = [ptri[irow+1][icol], ptri[irow+1][icol+1]]
+            ptri[irow][icol] = val + max(childvals)
+    return ptri[0][0]
+
+
+@timeit
+def p67(fn='triangle.txt'):
+    ptri = [[int(val) for val
+            in line.replace('\n', '').split(' ')]
+            for line in open(fn)]
+    return p18(ptri)
+
+
+@timeit
+def p19():
+    """Cheap or cheat?  Used existing calendar functionality.
+    """
+    def daterange(d0, d1):
+        d1 = d1 + dt.timedelta(1)
+        for n in range(int((d1-d0).days)):
+            yield d0 + dt.timedelta(n)
+    a = dt.date(1901, 1, 1)
+    b = dt.date(2000, 12, 31)
+    wdayson1st = [d.weekday() for d in daterange(a, b) if d.day == 1]
+    return len([wday for wday in wdayson1st if wday == 6])
+
+
+@timeit
+def p25():
+    for i, n in enumerate(nttools.gen_fib()):
+        if len(str(n)) >= 1000:
+            return (i, n)
+
 
 # #####################################################################
 # ################# PRELIMINARY ANALYSIS FUNCTIONS ####################
