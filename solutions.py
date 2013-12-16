@@ -509,6 +509,33 @@ def p19():
 
 
 @timeit
+def p21(N=10000):
+    def getdivs(n):
+        divs = [1]
+        i, nmax, prd = 2, n, 1
+        while i < nmax:
+            if nmax%i == 0:
+                nmax = nmax/i
+                divs.append(i)
+                divs.append(nmax*prd)
+                prd *= i
+            i += 1
+        return set(divs)
+    msums = {}
+    amicables = []
+    for i in range(1,N):
+        s = sum(getdivs(i))
+        print(s)
+        if s in msums:
+            amicables.append(i)
+            amicables.append(msums[s])
+            print(i,msums[s])
+        else: msums[s] = i
+    return sum(set(amicables))
+            
+
+
+@timeit
 def p25():
     for i, n in enumerate(nttools.gen_fib()):
         if len(str(n)) >= 1000:
