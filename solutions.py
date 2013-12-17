@@ -531,11 +531,14 @@ def p21(N=10000):
 
 @timeit
 def p21_fast(N=10000):
-    A = [0]*(N+1)
-    for i in range (1, N):
-        for j in range (2*i, N, i):
-            A[j] += i
+    A = list(nttools.sum_proper_divs(N))
     return sum([i for i in range(2,N) if A[i] < N and A[A[i]]==i and i!=A[i]])
+
+
+@timeit
+def p22():
+    with open('names.txt') as f: names=sorted([n.strip('"') for n in f.read().split(',')])
+    return sum(sum(ord(c)-64 for c in s)*i for i,s in enumerate(names,1))
 
 @timeit
 def p24():

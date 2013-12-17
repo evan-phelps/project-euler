@@ -169,3 +169,12 @@ def gen_fib():
     while True:
         yield a
         a, b = b, a+b
+
+
+def sum_proper_divs(N=1000):
+    A = [0]*(N+1)
+    yield A[0]
+    for i in range(1,N+1):
+        for j in range(2*i,N+1,i):
+            A[j] += i
+        yield A[i]
