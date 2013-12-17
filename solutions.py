@@ -514,13 +514,14 @@ def p19():
 def p20():
     return sum([int(digit) for digit in str(math.factorial(100))])
 
-#@timeit
+
+@timeit
 def p21(N=10000):
     def sumdivs(n):
         s = 1
         i, nmax = 2, n
         while i <= nmax/i:
-            if nmax%i == 0: s += i+n/i
+            if nmax%i == 0: s += i + (i != n/i)*n/i
             i += 1
         return s
 
@@ -528,7 +529,7 @@ def p21(N=10000):
     return sum([i for i in range(2,N) if A[i] < N and A[A[i]]==i and A[i]!=i])
 
 
-#@timeit
+@timeit
 def p21_fast(N=10000):
     A = [0]*(N+1)
     for i in range (1, N):

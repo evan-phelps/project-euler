@@ -86,12 +86,12 @@ def factor(N):
     """get all factors of the number N"""
 
     factors = []
-    for x in range(2, int(math.sqrt(N))):
+    sqrtN = math.sqrt(N)
+    for x in range(2, int(sqrtN)+1):
         (d, r) = divmod(N, x)
         if r == 0:
             factors.append(x)
-            factors.append(d)
-
+            if x != d: factors.append(d)
     return [1, N] + factors
 
 
