@@ -153,7 +153,7 @@ def pfactor(N, myprimes=None):
     if myprimes is None:
         myprimes = []
     p = gmpy.mpz(N)
-    if p.is_prime():
+    if p.is_prime() and prb(N) == N:
         myprimes.append(N)
     elif p > 1:
         f = prb(N)
