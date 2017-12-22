@@ -585,6 +585,17 @@ def p47(ndistinct=4, streak=4, Nmin=1000, Nmax=1000000):
             return i
     return -1
 
+@timeit
+def p613():
+    from scipy.integrate import dblquad
+    from numpy import arctan2 as atan2
+    from math import pi
+
+    g = lambda x, y: (atan2(40-y, -x)-atan2(-y,30-x))/(2*pi*30*40/2.0)
+    return dblquad(g, 0, 40, lambda x: 0, lambda x: 30-3.0/4*x,
+                   epsabs = 1e-10)
+
+
 # #####################################################################
 # ################# PRELIMINARY ANALYSIS FUNCTIONS ####################
 # #####################################################################
